@@ -1,0 +1,32 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Izinkan verifikasi SSL (AutoSSL / Let's Encrypt)
+    RewriteRule ^\.well-known/ - [L]
+
+    # Blokir akses langsung ke file & folder sensitif
+    RewriteRule ^(\.env.*|\.git.*|composer\.(json|lock)|package(-lock)?\.json|phpunit\.xml|artisan|vite\.config\.js|storage/|vendor/) - [F,L,NC]
+
+    # Arahkan akses langsung /public/... ke URL bersih tanpa /public
+    RewriteCond %{THE_REQUEST} \s/+public/([^\s?]*) [NC]
+    RewriteRule ^ /%1 [R=301,L,NE]
+
+    # Teruskan seluruh permintaan secara transparan ke public_html/public/
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Proteksi tambahan file sensitif
+<FilesMatch "(^\.env|^\.htaccess|^\.htpasswd|composer\.json|composer\.lock|package\.json|artisan)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
