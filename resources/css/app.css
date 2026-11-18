@@ -1,0 +1,141 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* ==========================================================================
+   GLOBAL TYPOGRAPHY SCALING (PUBLIC SITE READABILITY vs COMPACT ADMIN PANEL)
+   ========================================================================== */
+:root {
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+@media (min-width: 768px) {
+    :root {
+        font-size: 17.5px;
+    }
+}
+
+/* Keep Admin Panel balanced and comfortably readable (standard 16px base) */
+html.admin-panel {
+    font-size: 16px !important;
+}
+
+/* Ensure small badges, metadata, and footnotes are clearly legible */
+html:not(.admin-panel) [class*="text-[10px]"] {
+    font-size: 0.72rem !important;
+}
+
+html:not(.admin-panel) [class*="text-[11px]"] {
+    font-size: 0.78rem !important;
+}
+
+html.admin-panel [class*="text-[10px]"] {
+    font-size: 0.7rem !important;
+}
+
+html.admin-panel [class*="text-[11px]"] {
+    font-size: 0.76rem !important;
+}
+
+
+/* ==========================================================================
+   PAGE VIEW TRANSITIONS & LUXURY FADE EFFECTS
+   ========================================================================== */
+
+/* Top Loading Progress Bar with Glow */
+#page-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #d97706, #f59e0b, #10b981);
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.8), 0 0 4px rgba(16, 185, 129, 0.6);
+    z-index: 999999;
+    width: 0%;
+    opacity: 0;
+    transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-in-out;
+    pointer-events: none;
+    border-radius: 0 2px 2px 0;
+}
+
+#page-progress-bar.is-loading {
+    opacity: 1;
+}
+
+/* Native Browser View Transition (Chrome, Edge, Safari 18+) */
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-old(root) {
+    animation: 200ms cubic-bezier(0.4, 0, 1, 1) both pageFadeOut;
+}
+
+::view-transition-new(root) {
+    animation: 320ms cubic-bezier(0.16, 1, 0.3, 1) both pageFadeIn;
+}
+
+@keyframes pageFadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.998);
+    }
+}
+
+@keyframes pageFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.998);
+        filter: blur(2px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* Silky Smooth SPA Content Transition Classes */
+.page-fade-exit {
+    opacity: 0 !important;
+    transform: translateY(-8px) scale(0.998) !important;
+    filter: blur(1px) !important;
+    transition: opacity 160ms cubic-bezier(0.4, 0, 0.2, 1), 
+                transform 160ms cubic-bezier(0.4, 0, 0.2, 1),
+                filter 160ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+    pointer-events: none;
+}
+
+.page-fade-enter {
+    animation: pageContentEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    will-change: opacity, transform, filter;
+}
+
+@keyframes pageContentEnter {
+    0% {
+        opacity: 0;
+        transform: translateY(12px);
+        filter: blur(2px);
+    }
+    50% {
+        filter: blur(0.5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
